@@ -1,0 +1,27 @@
+{
+  "name": "joe-shop",
+  "version": "0.1.0",
+  "description": "Node.js App using Express and MongoDB",
+  "engines": {
+    "node": "7.7.3"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "mongoose": "*",
+    "bcrypt": "*",
+    "body-parser": "*",
+    "cors": "*",
+    "del": "*",
+    "express": "*",
+    "http": "0.0.0",
+    "jwt-simple": "*",
+    "method-override": "*",
+    "morgan": "*",
+    "passport": "*",
+    "passport-jwt": "*", 
+    "superlogin": "*"
+  }
+}
