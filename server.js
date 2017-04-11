@@ -57,7 +57,16 @@ app.use(passport.initialize());
 
   });
 
-
+  app.get('/api/user', function(req,res) {
+    User.findOne(function(err, user) {
+      if(err) {
+        res.send(err);
+      }
+      else {
+        res.json(user);
+      }
+    })
+  })
 
 
   //Create Item and send back all Items
@@ -102,21 +111,21 @@ app.use(passport.initialize());
       res.json({success: false, msg: "Please enter all information"});
     }
     else {
-      var newUser = new User({
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-        password2: req.body.password2
+        var newUser = new User({
+          username: req.body.username,
+          email: req.body.email,
+          password: req.body.password,
+          password2: req.body.password2
 
-      });
-      newUser.save(function(err) {
-        if(err) {
-          res.json({success: false, msg:"Username already exists."});
-        }
-        else {
-          res.json({success: true, msg: "User Created Successful"});
-        }
-      });
+        });
+        newUser.save(function(err) {
+          if(err) {
+            res.json({success: false, msg:"Username already exists."});
+          }
+          else {
+            res.json({success: true, msg: "User Created Successful"});
+          }
+        });
     }
   });
  
