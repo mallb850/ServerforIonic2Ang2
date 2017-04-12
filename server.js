@@ -57,17 +57,6 @@ app.use(passport.initialize());
 
   });
 
-  app.get('/api/user', function(req,res) {
-    User.findOne(function(err, user) {
-      if(err) {
-        res.send(err);
-      }
-      else {
-        res.json(user);
-      }
-    })
-  })
-
 
   //Create Item and send back all Items
 
@@ -82,6 +71,7 @@ app.use(passport.initialize());
       price: req.body.price,
       date: req.body.date,
       image: req.body.image,
+      seller: req.body.seller,
       done: false
     }, function(err, item) {
       if(err)
@@ -93,6 +83,21 @@ app.use(passport.initialize());
           res.send(err)
           res.json(items);
         });
+    });
+  });
+
+  app.post('/api/useritems', function(req,res) {
+
+    
+    Item.find({
+      seller: req.body.seller
+    }, function(err, items) {
+        if(err){
+          throw err;
+        }
+        else {
+          res.json(items);
+        }
     });
   });
 

@@ -9,7 +9,8 @@ var Item = new Schema({
   description: String,
   price: Number,
   date: { type: Date, default: Date.now },
-  image: String
+  image: String,
+  seller: String
 
 });
 
