@@ -18,7 +18,10 @@ var User = new Schema({
       password: {
         type: String,
         required: true
-      }
+      },
+      followers: [String],
+      following: [String],
+      items: []
 });
 
 

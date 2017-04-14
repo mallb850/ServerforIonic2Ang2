@@ -71,6 +71,10 @@ app.use(passport.initialize());
       price: req.body.price,
       date: req.body.date,
       image: req.body.image,
+      brand: req.body.brand,
+      size: req.body.size,
+      type: req.body.type,
+      condition: req.body.condition,
       seller: req.body.seller,
       done: false
     }, function(err, item) {
@@ -86,9 +90,54 @@ app.use(passport.initialize());
     });
   });
 
+
+  app.post('/api/following', function(req,res) {
+      
+      
+      User.findOneAndUpdate({
+         username: req.body.username  
+      },
+        {"$push": {followers: req.body.follower}},
+        
+        function(err, user) {
+
+        if(err) {
+          res.json({success: false, msg:"Error, Please Try Again"});
+        }
+
+        else {
+          res.json({success: true, msg:"You are now following " + req.body.username});
+          console.log('You are now following' + req.body.username);
+        }
+      } 
+    );
+
+     User.findOneAndUpdate({
+         username: req.body.follower  
+      },
+        {"$push": {following: req.body.username}},
+        
+        function(err, user) {
+        
+        if(err) {
+          res.json({success: false, msg:"Error, Please Try Again"});
+        }
+        
+        else {
+          res.json({success: true, msg:"You are now following " + req.body.follower});
+        }
+      } 
+    );
+
+
+
+
+  });
+
+
+
   app.post('/api/useritems', function(req,res) {
 
-    
     Item.find({
       seller: req.body.seller
     }, function(err, items) {

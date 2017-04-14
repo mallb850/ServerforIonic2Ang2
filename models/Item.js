@@ -8,6 +8,10 @@ var Item = new Schema({
   title: String,
   description: String,
   price: Number,
+  brand: String,
+  size: Number,
+  type: String,
+  condition: String,
   date: { type: Date, default: Date.now },
   image: String,
   seller: String
