@@ -13,6 +13,7 @@ var User = new Schema({
       },
       username: {
         type: String,
+        unique: true,
         required: true
       },
       password: {
@@ -21,7 +22,8 @@ var User = new Schema({
       },
       followers: [String],
       following: [String],
-      items: []
+      items: [],
+      feedback: [{rating: Number, message: String, username: String}]
 });
 
 

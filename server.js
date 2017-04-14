@@ -90,6 +90,20 @@ app.use(passport.initialize());
     });
   });
 
+  app.post('/api/userprofile', function(req,res) {
+      User.findOne({
+        username: req.body.username
+      }, function(err, user ) {
+        if(err) {
+          console.log(err);
+        }
+        else {
+          res.json(user);
+          console.log(user);
+        };
+      });
+  });
+
 
   app.post('/api/following', function(req,res) {
       
