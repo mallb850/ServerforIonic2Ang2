@@ -57,6 +57,17 @@ app.use(passport.initialize());
 
   });
 
+  app.get('/api/allUsers', function(req,res) {
+    User.find(function(err,users) {
+      if(err){
+        res.send(err);
+        console.log("Error");
+      }
+      else {
+        res.json(users);
+      }
+    });
+  });
 
   //Create Item and send back all Items
 
@@ -81,14 +92,28 @@ app.use(passport.initialize());
       if(err)
         res.send(err);
 
-        //get and return all the items after Create
-        Item.find(function(err,items) {
-          if(err)
-          res.send(err)
-          res.json(items);
+        //add to user items array
+        User.findOneAndUpdate({
+          username: req.body.seller
+        }, 
+        {$push: {items: item}},
+        {safe: true, upsert: true}, 
+        
+        function(err, user) {
+          if(err){
+            console.log(err);
+            res.send(err);
+          }
+          else {
+            console.log("Successfully added item to user");
+          }
+
         });
+
     });
   });
+
+
 
   app.post('/api/userprofile', function(req,res) {
       User.findOne({
@@ -111,7 +136,7 @@ app.use(passport.initialize());
       User.findOneAndUpdate({
          username: req.body.username  
       },
-        {"$push": {followers: req.body.follower}},
+        {"$push": {following: req.body.seller}},
         
         function(err, user) {
 
@@ -120,16 +145,19 @@ app.use(passport.initialize());
         }
 
         else {
-          res.json({success: true, msg:"You are now following " + req.body.username});
-          console.log('You are now following' + req.body.username);
+          res.json({success: true, msg:"You are now following " + req.body.seller});
         }
       } 
     );
 
+  });
+
+  app.post('/api/follower', function(req,res) {
+    
      User.findOneAndUpdate({
-         username: req.body.follower  
+         username: req.body.seller  
       },
-        {"$push": {following: req.body.username}},
+        {"$push": {followers: req.body.username}},
         
         function(err, user) {
         
@@ -138,13 +166,10 @@ app.use(passport.initialize());
         }
         
         else {
-          res.json({success: true, msg:"You are now following " + req.body.follower});
+          res.json({success: true, msg: req.body.follower + "started following you"});
         }
       } 
     );
-
-
-
 
   });
 
@@ -168,7 +193,7 @@ app.use(passport.initialize());
     Item.remove({
       _id: req.params.item_id
     }, function(err,review) {
-
+      
     });
   });
 
