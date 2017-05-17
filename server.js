@@ -9,8 +9,15 @@ var passport = require('passport');
 var jwt = require('jwt-simple');
 var User = require('../server/models/User');
 var Item = require('../server/models/Item');
+var Message = require('../server/models/Message');
 var actions = require('../server/actions/methods');
+var cloudinary = require('cloudinary');
+let http = require('http').Server(app); 
+let io = require('socket.io')(http);
 var Schema = mongoose.Schema;
+
+
+
 
 // Configuration
 
@@ -33,10 +40,29 @@ app.use(cors());
 app.use(passport.initialize());
 
 
+cloudinary.config({ 
+  cloud_name: 'dcwmbht6y', 
+  api_key: '629289185648713', 
+  api_secret: 'ye_QdoB3V0vVxGLUiVRsAb6t0bk' 
+});
 
 
+// Socket.io 
+
+io.on('connection', (socket) => { 
+  
+  console.log('user connected'); 
 
 
+  socket.on('disconnect', function() { 
+    console.log('user disconnected'); 
+  }); 
+  
+  
+  socket.on('add-message', (message) => { 
+    io.emit('message', {type:'new-message', text: message}); 
+  }); 
+});
 
 
 // Routes
@@ -73,8 +99,65 @@ app.use(passport.initialize());
 
   app.post('/authenticate', actions.authenticate);
 
+  // Create Message
+
+  app.post('/api/messages', function(req,res) {
+
+    Message.create({
+      To: req.body.to,
+      From: req.body.from,
+      date: req.body.date,
+      images: req.body.images,
+      messages: req.body.messages
+    }, function(err, message) {
+      if(err)
+        
+        res.send(err);
+      
+        User.findOneAndUpdate({
+          username: req.body.seller
+        }, 
+        
+        {$push: {messages: message}},
+        {safe: true, upsert: true}, 
+        
+        function(err, message) {
+        
+          if(err){
+            console.log(err);
+            res.send(err);
+          }
+
+        User.findOneAndUpdate({
+          username: req.body.user
+        },
+
+        {$push: {messages: message}},
+        {safe: true, upsert: true}, 
+        
+        function(err, message) {
+          
+          if(err){
+            console.log(err);
+            res.send(err);
+          }
+
+          else {
+            console.log("Messages successfully created and added");
+          }
+
+
+        });
+      })
+   })
+ })
+
   app.post('/api/items', function(req,res) {
     console.log("Creating Item");
+
+    cloudinary.uploader.upload(req.body.image, function(result) { 
+      console.log(result); 
+    });
 
     Item.create({
       title: req.body.title,
@@ -199,6 +282,8 @@ app.use(passport.initialize());
 
   require('./config/passport')(passport);
 
+
+
   app.post('/api/signup', function(req,res) {
     if(!req.body.username || !req.body.password || !req.body.email || !req.body.password2) {
       res.json({success: false, msg: "Please enter all information"});
@@ -213,7 +298,7 @@ app.use(passport.initialize());
         });
         newUser.save(function(err) {
           if(err) {
-            res.json({success: false, msg:"Username already exists."});
+            res.json({success: false, msg:"Email or Username already exists."});
           }
           else {
             res.json({success: true, msg: "User Created Successful"});
@@ -226,3 +311,7 @@ app.use(passport.initialize());
   //listen
   app.listen(8080);
   console.log('App listening on port 8080');
+
+  http.listen(5000, () => { 
+    console.log('started on port 5000'); 
+  });
