@@ -21,7 +21,7 @@ var Schema = mongoose.Schema;
 
 // Configuration
 
-mongoose.connect('mongodb://localhost/joeShop');
+mongoose.connect('mongodb://heroku_4clm21xx:q0blb36mo0hshv0abpv4m');
 
 app.use(function(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -164,7 +164,7 @@ io.on('connection', (socket) => {
       description: req.body.description,
       price: req.body.price,
       date: req.body.date,
-      image: req.body.image,
+      image: this.image,
       brand: req.body.brand,
       size: req.body.size,
       type: req.body.type,
