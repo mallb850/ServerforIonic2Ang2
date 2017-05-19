@@ -15,17 +15,18 @@ var cloudinary = require('cloudinary');
 let http = require('http').Server(app); 
 let io = require('socket.io')(http);
 var Schema = mongoose.Schema;
+var config = require('../server/config/database.json');
 
 
 
 
 // Configuration
 
-mongoose.connect('mongodb://ds143241.mlab.com:43241/heroku_4clm21xx');
+mongoose.connect(config.uri);
 
 app.use(function(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST, OPTIONS, DETELE');
+  res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
@@ -299,6 +300,7 @@ io.on('connection', (socket) => {
         newUser.save(function(err) {
           if(err) {
             res.json({success: false, msg:"Email or Username already exists."});
+            console.log(err);
           }
           else {
             res.json({success: true, msg: "User Created Successful"});
