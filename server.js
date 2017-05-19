@@ -21,7 +21,7 @@ var Schema = mongoose.Schema;
 
 // Configuration
 
-mongoose.connect('mongodb://heroku_4clm21xx:q0blb36mo0hshv0abpv4m');
+mongoose.connect('mongodb://ds143241.mlab.com:43241/heroku_4clm21xx');
 
 app.use(function(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
