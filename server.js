@@ -16,6 +16,7 @@ let http = require('http').Server(app);
 let io = require('socket.io')(http);
 var Schema = mongoose.Schema;
 var config = require('../server/config/database.json');
+var cloudconfig = require('../server/config/cloudinary.json');
 
 
 
@@ -24,13 +25,13 @@ var config = require('../server/config/database.json');
 
 mongoose.connect(config.uri);
 
-app.use(function(req,res,next) {
+
+app.all('/', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST, OPTIONS');
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
   res.header('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
   next();
-});
-
+ });
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -42,9 +43,9 @@ app.use(passport.initialize());
 
 
 cloudinary.config({ 
-  cloud_name: 'dcwmbht6y', 
-  api_key: '629289185648713', 
-  api_secret: 'ye_QdoB3V0vVxGLUiVRsAb6t0bk' 
+  cloud_name: cloudconfig.cloudname, 
+  api_key: cloudconfig.apikey, 
+  api_secret: cloudconfig.apisecret 
 });
 
 
@@ -69,7 +70,7 @@ io.on('connection', (socket) => {
 // Routes
 
     //Get reviews
-    app.get('/api/items', function(req,res) {
+  app.get('/api/items', function(req,res) {
       console.log('Getting Items');
 
     //Get all Items using mongoose
@@ -311,9 +312,7 @@ io.on('connection', (socket) => {
  
 
   //listen
-  app.listen(8080);
-  console.log('App listening on port 8080');
-
-  http.listen(5000, () => { 
-    console.log('started on port 5000'); 
+  app.listen(8080, () => {
+    console.log('KickPusherz listening on port 8080');
   });
+  
